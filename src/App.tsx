@@ -12,7 +12,7 @@ function pascalCase(input: string) {
 	return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
-function javaGen(subclass: string, superclass: string = "", members: Member[] = []): string {
+function javaGen(subclass: string, superclass: string = "", construct: boolean = false, members: Member[] = []): string {
 	let code = `public class ${subclass}`;
 
 	if (superclass.length > 0) {
@@ -27,6 +27,31 @@ function javaGen(subclass: string, superclass: string = "", members: Member[] = 
 	}
 
 	code += '\n';
+
+	if (construct) {
+		/*
+		public Human(String name, int age)
+		{
+			this.name = name;
+			this.age = age;
+		}
+		*/
+		code += `\tpublic ${subclass}(`;
+
+		for (let i = 0; i < members.length; i++) {
+			const member = members[i];
+			if (i > 0) code += `, `;
+			code += `${member.type} ${(member.name)}}`;
+		}
+		code += `)\n\t{\n`;
+
+		for (let i = 0; i < members.length; i++) {
+			const member = members[i];
+			code += `\t\tthis.${member.name} = ${member.name};\n\t}\n`;
+		}
+
+		code += '\n';
+	}
 
 	for (let i = 0; i < members.length; i++) {
 		const member = members[i];
@@ -67,6 +92,8 @@ function App() {
 			<label htmlFor="subclass">Subclass</label>
 			<input type="text" name={`superclass`} id={`superclass`}/>
 			<label htmlFor="superclass">Superclass</label>
+			<input type="checkbox" name={`constructor`} id={`constructor`}/>
+			<label htmlFor="constructor">Constructor?</label>
 			<br/>
 			<div>
 				{Array(5).fill(null).map((_, idx: number) =>
@@ -82,6 +109,7 @@ function App() {
 			<button onClick={() => {
 				const subclass = document.getElementById("subclass") as HTMLInputElement;
 				const superclass = document.getElementById("superclass") as HTMLInputElement;
+				const constructor = document.getElementById("constructor") as HTMLInputElement;
 				const members: Member[] = [];
 
 				for (let i = 0; i < 5; i++) {
@@ -94,8 +122,9 @@ function App() {
 					}
 				}
 
-				setJavaCode(javaGen(subclass.value, superclass.value, members));
-			}}>Generate</button>
+				setJavaCode(javaGen(subclass.value, superclass.value, constructor.checked, members));
+			}}>Generate
+			</button>
 			<br/>
 			<br/>
 			<textarea name="" id="" cols={50} rows={20} value={javaCode}></textarea>
