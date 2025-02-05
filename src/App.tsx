@@ -13,7 +13,7 @@ function pascalCase(input: string) {
 }
 
 function javaGen(subclass: string, superclass: string = "", members: Member[] = []): string {
-	let code = `class ${subclass}`;
+	let code = `public class ${subclass}`;
 
 	if (superclass.length > 0) {
 		code += ` extends ${superclass}`;
