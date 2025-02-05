@@ -43,7 +43,7 @@ function javaGen(subclass: string, superclass: string = "", construct: boolean =
 		for (let i = 0; i < concat.length; i++) {
 			const member = concat[i];
 			if (i > 0) code += `, `;
-			code += `${member.type} ${(member.name)}}`;
+			code += `${member.type} ${(member.name)}`;
 		}
 		code += `)\n\t{\n`;
 
@@ -53,10 +53,12 @@ function javaGen(subclass: string, superclass: string = "", construct: boolean =
 
 		for (let i = 0; i < members.length; i++) {
 			const member = members[i];
-			code += `\t\tthis.${member.name} = ${member.name};\n\t}\n`;
+			code += `\t\tthis.${member.name} = ${member.name};\n`;
 		}
 
-		code += '\n';
+		code += '\t}\n';
+
+		code += `\n`;
 	}
 
 	for (let i = 0; i < members.length; i++) {
