@@ -106,6 +106,41 @@ function App() {
 			<input type="checkbox" name={`constructor`} id={`constructor`}/>
 			<label htmlFor="constructor">Constructor?</label>
 			<br/>
+			<br/>
+			<button onClick={() => {
+				const subclass = document.getElementById("subclass") as HTMLInputElement;
+				const superclass = document.getElementById("superclass") as HTMLInputElement;
+
+				superclass.value = subclass.value;
+				subclass.value = '';
+
+				for (let i = 0; i < 5; i++) {
+					const smemberName = document.getElementById(`s-name-${i}`) as HTMLInputElement;
+					console.log(`i=${i} with ${smemberName.value} of length ${smemberName.value.length}`);
+					if (smemberName.value.length > 0) continue;
+					// 2 1
+					console.log("Starting on i=" + i);
+					for (let j = 0; j < 5-i; j++) {
+						const memberName = document.getElementById(`name-${j}`) as HTMLInputElement;
+						const memberType = document.getElementById(`type-${j}`) as HTMLInputElement;
+						const smemberName = document.getElementById(`s-name-${i+j}`) as HTMLInputElement;
+						const smemberType = document.getElementById(`s-type-${i+j}`) as HTMLInputElement;
+						const memberGet = document.getElementById(`get-${j}`) as HTMLInputElement;
+						const memberSet = document.getElementById(`set-${j}`) as HTMLInputElement;
+
+						smemberName.value = memberName.value;
+						smemberType.value = memberType.value;
+						memberName.value = '';
+						memberType.value = '';
+
+						memberGet.checked = true;
+						memberSet.checked = true;
+					}
+
+					break;
+				}
+			}}>Next Subclass</button>
+			<br/>
 			<h4>Explicit Attributes</h4>
 			<div>
 				{Array(5).fill(null).map((_, idx: number) =>
