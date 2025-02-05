@@ -12,7 +12,7 @@ function pascalCase(input: string) {
 	return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
-function javaGen(subclass: string, superclass: string = "", construct: boolean = false, members: Member[] = []): string {
+function javaGen(subclass: string, superclass: string = "", construct: boolean = false, members: Member[] = [], smembers: Member[] = []): string {
 	let code = `public class ${subclass}`;
 
 	if (superclass.length > 0) {
@@ -30,20 +30,26 @@ function javaGen(subclass: string, superclass: string = "", construct: boolean =
 
 	if (construct) {
 		/*
-		public Human(String name, int age)
+		public Human(boolean alive, String name, int age)
 		{
+			super(alive);
 			this.name = name;
 			this.age = age;
 		}
 		*/
 		code += `\tpublic ${subclass}(`;
 
-		for (let i = 0; i < members.length; i++) {
-			const member = members[i];
+		const concat = smembers.concat(members);
+		for (let i = 0; i < concat.length; i++) {
+			const member = concat[i];
 			if (i > 0) code += `, `;
 			code += `${member.type} ${(member.name)}}`;
 		}
 		code += `)\n\t{\n`;
+
+		if (smembers.length > 0) {
+			code += `\t\tsuper(${smembers.join(', ')});\n`;
+		}
 
 		for (let i = 0; i < members.length; i++) {
 			const member = members[i];
@@ -95,6 +101,7 @@ function App() {
 			<input type="checkbox" name={`constructor`} id={`constructor`}/>
 			<label htmlFor="constructor">Constructor?</label>
 			<br/>
+			<h4>Explicit Attributes</h4>
 			<div>
 				{Array(5).fill(null).map((_, idx: number) =>
 					<div className="hstack" key={idx}>
@@ -106,11 +113,23 @@ function App() {
 				)}
 			</div>
 			<br/>
+			<br/>
+			<h4>Inherited Attributes</h4>
+			<div>
+				{Array(5).fill(null).map((_, idx: number) =>
+					<div className="hstack" key={idx}>
+						<input type="text" id={`s-name-${idx}`}/>
+						<input type="text" id={`s-type-${idx}`}/>
+					</div>
+				)}
+			</div>
+			<br/>
 			<button onClick={() => {
 				const subclass = document.getElementById("subclass") as HTMLInputElement;
 				const superclass = document.getElementById("superclass") as HTMLInputElement;
 				const constructor = document.getElementById("constructor") as HTMLInputElement;
 				const members: Member[] = [];
+				const smembers: Member[] = [];
 
 				for (let i = 0; i < 5; i++) {
 					const n = document.getElementById(`name-${i}`) as HTMLInputElement;
@@ -122,7 +141,15 @@ function App() {
 					}
 				}
 
-				setJavaCode(javaGen(subclass.value, superclass.value, constructor.checked, members));
+				for (let i = 0; i < 5; i++) {
+					const n = document.getElementById(`s-name-${i}`) as HTMLInputElement;
+					const t = document.getElementById(`s-type-${i}`) as HTMLInputElement;
+					if (n.value.length > 0 && t.value.length > 0) {
+						members.push({ name: n.value, type: t.value });
+					}
+				}
+
+				setJavaCode(javaGen(subclass.value, superclass.value, constructor.checked, members, smembers));
 			}}>Generate
 			</button>
 			<br/>
