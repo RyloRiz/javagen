@@ -145,7 +145,7 @@ function App() {
 					const n = document.getElementById(`s-name-${i}`) as HTMLInputElement;
 					const t = document.getElementById(`s-type-${i}`) as HTMLInputElement;
 					if (n.value.length > 0 && t.value.length > 0) {
-						members.push({ name: n.value, type: t.value });
+						members.push({ name: n.value, type: t.value, get: false, set: false });
 					}
 				}
 
