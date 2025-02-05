@@ -13,6 +13,9 @@ function pascalCase(input: string) {
 }
 
 function javaGen(subclass: string, superclass: string = "", construct: boolean = false, members: Member[] = [], smembers: Member[] = []): string {
+	console.log(members);
+	console.log(smembers);
+
 	let code = `public class ${subclass}`;
 
 	if (superclass.length > 0) {
@@ -48,7 +51,7 @@ function javaGen(subclass: string, superclass: string = "", construct: boolean =
 		code += `)\n\t{\n`;
 
 		if (smembers.length > 0) {
-			code += `\t\tsuper(${smembers.join(', ')});\n`;
+			code += `\t\tsuper(${smembers.map(s => s.name).join(', ')});\n`;
 		}
 
 		for (let i = 0; i < members.length; i++) {
@@ -147,7 +150,7 @@ function App() {
 					const n = document.getElementById(`s-name-${i}`) as HTMLInputElement;
 					const t = document.getElementById(`s-type-${i}`) as HTMLInputElement;
 					if (n.value.length > 0 && t.value.length > 0) {
-						members.push({ name: n.value, type: t.value, get: false, set: false });
+						smembers.push({ name: n.value, type: t.value, get: false, set: false });
 					}
 				}
 
